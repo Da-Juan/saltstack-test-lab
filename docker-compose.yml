@@ -1,0 +1,53 @@
+version: "3.5"
+services:
+  core:
+    build: ./core/
+    image: saltstack-lab-core
+    networks:
+      saltstack:
+  master:
+    build:
+      context: ./master/
+    image: saltstack-lab-master
+    container_name: saltstack-master
+    hostname: saltstack-master
+    networks:
+      saltstack:
+        aliases:
+          - salt
+    volumes:
+      - type: bind
+        source: ./salt
+        target: /srv/salt
+      - type: bind
+        source: ./pillar
+        target: /srv/pillar
+    depends_on:
+      - core
+  minion1:
+    build: ./minion/
+    image: saltstack-lab-minion
+    container_name: saltstack-minion1
+    hostname: saltstack-minion1
+    networks:
+      saltstack:
+        aliases:
+          - minion1
+    depends_on:
+      - core
+  minion2:
+    build: ./minion/
+    image: saltstack-lab-minion
+    container_name: saltstack-minion2
+    hostname: saltstack-minion2
+    networks:
+      saltstack:
+        aliases:
+          - minion2
+    depends_on:
+      - minion1
+
+networks:
+  saltstack:
+    driver: bridge
+    name: saltstack

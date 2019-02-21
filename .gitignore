@@ -1,0 +1,4 @@
+salt/*
+pillar/*
+!.gitkeep
+docker-compose.override.yml
